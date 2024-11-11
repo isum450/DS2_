@@ -1,0 +1,6 @@
+﻿  BpTree.cpp
+C:\Users\is104\DATASTRUCTURE\main\main\BpTree.cpp(85,38): warning C4018: '>': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\is104\DATASTRUCTURE\main\main\BpTree.cpp(90,40): warning C4018: '>': signed 또는 unsigned가 일치하지 않습니다.
+C:\Users\is104\DATASTRUCTURE\main\main\BpTreeNode.h(36): warning C4172: 지역 변수 또는 임시: m의 주소를 반환하고 있습니다.
+C:\Users\is104\DATASTRUCTURE\main\main\BpTreeNode.h(37): warning C4172: 지역 변수 또는 임시: m의 주소를 반환하고 있습니다.
+  main.vcxproj -> C:\Users\is104\DATASTRUCTURE\main\Debug\main.exe
