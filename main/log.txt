@@ -1,2 +1,9 @@
 Opening command file: command.txt
-====LOAD====
+===== LOAD =====
+Success
+===============
+
+===== PRINT_BP =====
+Success
+===============
+

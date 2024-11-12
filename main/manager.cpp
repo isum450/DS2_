@@ -43,6 +43,14 @@ void Manager::run(const char* command_txt) {
             else
                 PrintErrorCode(300);
         }
+        else if (cmd_line == "PRINT_BP")
+        {
+            bool printComment = PRINT_BP();
+            if (printComment)
+                PrintSuccess("PRINT_BP");
+            else
+                PrintErrorCode(700);
+        }
         else if (cmd_line == "EXIT")
         {
             PrintSuccess("Exit");
@@ -106,11 +114,16 @@ bool Manager::ADD(string line) {
 
     return true;
 }
-/*
+
 bool Manager::PRINT_BP() {
-
+    if (bp->getRoot() == nullptr)
+    {
+        return false;
+    }
+    bp->Print();
+    return true;
 }
-
+/*
 bool Manager::SEARCH_BP(string name) {
 
 }
