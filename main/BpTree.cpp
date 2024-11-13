@@ -6,7 +6,7 @@ BpTree::BpTree(ofstream* fout, int order) {
 	this->fout = fout;
 
 	ifstream ifp;
-	ifp.open("C:\\Users\\is104\\DATASTRUCTURE\\main\\DS2\\DS2\\main\\input_data.txt");
+	ifp.open("input_data.txt");
 
 	if (ifp.fail())//file not connect
 	{
@@ -14,6 +14,11 @@ BpTree::BpTree(ofstream* fout, int order) {
 		*fout << "100" << endl;
 		*fout << "=============" << endl;
 		exit(1);
+	}
+	else
+	{
+		*fout << "========LOAD========" << endl;
+		*fout << "Success" << endl;
 	}
 
 	string line;//read input_data.txt 1 line
@@ -38,6 +43,9 @@ BpTree::BpTree(ofstream* fout, int order) {
 		Insert(DATA);
 
 	}
+
+	ifp.close();
+	*fout << "====================" << endl;
 }
 
 bool BpTree::Insert(FlightData* newData) {
@@ -48,7 +56,7 @@ bool BpTree::Insert(FlightData* newData) {
 		BpTreeDataNode* dataNode = new BpTreeDataNode();
 		dataNode->insertDataMap(newData->GetFlightNumber(), newData);
 		root = dataNode;
-		cout << newData->GetFlightNumber() << endl;
+
 	}
 	else
 	{
@@ -58,21 +66,11 @@ bool BpTree::Insert(FlightData* newData) {
 			if (BpTreeDataNode* dataNode = dynamic_cast<BpTreeDataNode*>(current)) {
 				// 현재 노드가 데이터 노드인 경우
 				auto datamap = current->getDataMap();
-				string key[3];
-				FlightData* node[3];
-				int i = 0;
-				for (const auto& pair : *datamap) {
-					key[i] = pair.first;
-					node[i] = pair.second;
-					i++;
-				}
 
-
-				dataNode->insertDataMap(newData->GetFlightNumber(), newData);
-				if (excessDataNode(dataNode)) {
-					splitDataNode(dataNode);
+				current->insertDataMap(newData->GetFlightNumber(), newData);
+				if (excessDataNode(current)) {
+					splitDataNode(current);
 				}
-				cout << newData->GetFlightNumber() << endl;
 				return true;
 			}
 			else if (BpTreeIndexNode* indexNode = dynamic_cast<BpTreeIndexNode*>(current)) {
@@ -102,7 +100,6 @@ bool BpTree::Insert(FlightData* newData) {
 		}
 
 	}
-
 	return true;
 }
 
@@ -135,13 +132,14 @@ void BpTree::splitDataNode(BpTreeNode* pDataNode) {
 	newNode->insertDataMap(key[1], node[1]);
 	pDataNode->deleteMap(key[1]);
 
-	
+	newNode->setNext(pDataNode);
+	pDataNode->setPrev(newNode);
 
 	// 새로운 인덱스 노드를 생성하고, 분할된 데이터 노드를 연결합니다.
 	if (pDataNode->getParent() == nullptr) {
 		BpTreeIndexNode* newRoot = new BpTreeIndexNode();
 
-		newRoot->insertIndexMap(key[1], pDataNode);
+		newRoot->insertIndexMap(key[1], pDataNode);//여기서 pDataNode가 아닌 것 같다.
 		newRoot->setMostLeftChild(newNode);
 		pDataNode->setParent(newRoot);
 		newNode->setParent(newRoot);
@@ -150,12 +148,14 @@ void BpTree::splitDataNode(BpTreeNode* pDataNode) {
 	else {
 		BpTreeIndexNode* parent = dynamic_cast<BpTreeIndexNode*>(pDataNode->getParent());
 		parent->insertIndexMap(key[1], pDataNode);
+		parent->setMostLeftChild(newNode);
 		newNode->setParent(parent);
 		pDataNode->setParent(parent);
 		if (excessIndexNode(parent)) {
 			splitIndexNode(parent);//분할하고 mostleftchild 설정해야 함
 		}
 	}
+
 }
 
 void BpTree::splitIndexNode(BpTreeNode* pIndexNode) {
@@ -163,32 +163,29 @@ void BpTree::splitIndexNode(BpTreeNode* pIndexNode) {
 	BpTreeIndexNode* newNode = new BpTreeIndexNode();
 
 	auto idxmap = pIndexNode->getIndexMap();
-	string key[3];
-	BpTreeNode* node[3];
-	int i = 0;
-	for (const auto& pair : *idxmap) {
-		key[i] = pair.first;
-		node[i] = pair.second;
-		i++;
-	}
+	vector<pair<string, BpTreeNode*>>tempIndex(idxmap->begin(), idxmap->end());
 
-	newNode->insertIndexMap(key[0], node[0]);
-	pIndexNode->deleteMap(key[0]);
-	newNode->insertIndexMap(key[1], node[1]);
-	pIndexNode->deleteMap(key[1]);
+	newNode->setMostLeftChild(pIndexNode->getMostLeftChild());
+	newNode->insertIndexMap(tempIndex[0].first, tempIndex[1].second);
+	newNode->insertIndexMap(tempIndex[1].first, nullptr);
+	pIndexNode->deleteMap(tempIndex[0].first);
+	pIndexNode->setMostLeftChild(tempIndex[1].second);
+	pIndexNode->deleteMap(tempIndex[1].first);
+
 
 	// 새로운 인덱스 노드를 부모 노드에 연결합니다.
 	if (pIndexNode->getParent() == nullptr) {
 		BpTreeIndexNode* newRoot = new BpTreeIndexNode();
-		newRoot->insertIndexMap(key[1], pIndexNode);
+		newRoot->insertIndexMap(tempIndex[1].first, pIndexNode);
 		newRoot->setMostLeftChild(newNode);
 		pIndexNode->setParent(newRoot);
+		
 		newNode->setParent(newRoot);
 		root = newRoot;
 	}
 	else {
 		BpTreeIndexNode* parent = dynamic_cast<BpTreeIndexNode*>(pIndexNode->getParent());
-		parent->insertIndexMap(key[1], newNode);
+		parent->insertIndexMap(tempIndex[1].first, newNode);
 		newNode->setParent(parent);
 		pIndexNode->setParent(parent);
 		if (excessIndexNode(parent)) {
@@ -234,15 +231,17 @@ void BpTree::Print() {
 	while (current->getMostLeftChild() != nullptr)
 		current = current->getMostLeftChild();
 	
-	while (current->getNext() != nullptr)
+	*fout << "========PRINT_BP========" << endl;
+	while (current!= nullptr)
 	{
 		auto datamap = current->getDataMap();
+
 		for (const auto& pair : *datamap) {
-			cout << pair.first << " ";
+			FlightData foutData = *pair.second;
+			*fout << pair.first <<" | " << foutData.GetAirlineName() << " | " << foutData.GetDestination() << foutData.GetFlightNumber() << " | " << foutData.GetNumberofSeats() << " | " << foutData.GetStatus() << endl;
 		}
-		cout << endl;
 
 		current = current->getNext();
 	}
-
+	*fout << "========================" << endl;
 }

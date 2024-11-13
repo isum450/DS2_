@@ -30,45 +30,29 @@ void Manager::run(const char* command_txt) {
         if (cmd_line == "LOAD")//LOAD command
         {
             bool printComment = LOAD();
-            if (printComment)
-                PrintSuccess("LOAD");
-            else
+            if (!printComment)
                 PrintErrorCode(100);
         }
         else if (cmd_line.find("ADD") != string::npos )
         {
             bool printComment = ADD(cmd_line);
-            if (printComment)
-                PrintSuccess("ADD");
-            else
+            if (!printComment)
                 PrintErrorCode(300);
         }
         else if (cmd_line == "PRINT_BP")
         {
             bool printComment = PRINT_BP();
-            if (printComment)
-                PrintSuccess("PRINT_BP");
-            else
+            if (!printComment)
                 PrintErrorCode(700);
         }
         else if (cmd_line == "EXIT")
         {
-            PrintSuccess("Exit");
-
             //command.txt close
             fcmd.close();
             return;
         }
         
     }
-}
-
-void Manager::PrintSuccess(const char* cmd)
-{
-    //Success comment input log.txt
-    flog << "===== " << cmd << " =====" << endl;
-    flog << "Success" << endl;
-    flog << "===============\n" << endl;
 }
 void Manager::PrintErrorCode(int num)
 {

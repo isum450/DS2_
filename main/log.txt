@@ -1,9 +1,11 @@
 Opening command file: command.txt
-===== LOAD =====
+========LOAD========
 Success
-===============
-
-===== PRINT_BP =====
-Success
-===============
-
+====================
+========PRINT_BP========
+7C024 | JEJU | CJU7C024 | 3 | Delayed
+AK101 | AirKwangwoon | LHRAK101 | 6 | Cancelled
+JA111 | JeanAir | MUCJA111 | 4 | Departure
+KE901 | KoreanAir | LAXKE901 | 7 | Boarding
+OZ107 | ASIANA | SINOZ107 | 5 | Boarding
+========================
