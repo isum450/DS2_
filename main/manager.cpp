@@ -39,6 +39,28 @@ void Manager::run(const char* command_txt) {
             if (!printComment)
                 PrintErrorCode(300);
         }
+        else if (cmd_line.find("SEARCH_BP") != string::npos)
+        {
+            stringstream ss(cmd_line);
+            vector<string> DATA_;
+            string input;
+
+            while (getline(ss, input, '\t'))
+            {
+                DATA_.push_back(input);
+            }
+
+            if (DATA_.size() == 3)
+            {
+                SEARCH_BP(DATA_[1], DATA_[2]);
+                
+                
+            }
+            else if (DATA_.size() == 2)
+            {
+                SEARCH_BP(DATA_[1]);
+            }
+        }
         else if (cmd_line == "PRINT_BP")
         {
             bool printComment = PRINT_BP();
@@ -80,11 +102,12 @@ bool Manager::LOAD() {
 //}
 
 bool Manager::ADD(string line) {//BpTree add command
-    stringstream inputdata(line);
+    
+    stringstream ss(line);
     vector<string> DATA_;
     string input;
 
-    while (inputdata >> input)
+    while (getline(ss, input, '\t'))
     {
         DATA_.push_back(input);
     }
@@ -169,15 +192,24 @@ bool Manager::PRINT_BP() {
     bp->Print();
     return true;
 }
-/*
-bool Manager::SEARCH_BP(string name) {
 
+bool Manager::SEARCH_BP(string name) {
+    
+    bool printComment = bp->SearchModel(name);
+    if (!printComment)
+        PrintErrorCode(400);
+
+    return true;
 }
 
 bool Manager::SEARCH_BP(string start, string end) {
+    bool printComment = bp->SearchRange(start, end);
+    if (!printComment)
+        PrintErrorCode(400);
 
+    return true;
 }
-
+/*
 bool Manager::SEARCH_AVL(string name) {
 
 }

@@ -20,3 +20,15 @@ KE901 | KoreanAir | LAXKE901 | 7 | Boarding
 OZ107 | ASIANA | SINOZ107 | 5 | Boarding
 OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
 ========================
+========SEARCH_BP========
+7C024 | JEJU | CJU7C024 | 3 | Delayed
+AK101 | AirKwangwoon | LHRAK101 | 6 | Cancelled
+JA111 | JeanAir | MUCJA111 | 4 | Departure
+KE901 | KoreanAir | LAXKE901 | 7 | Boarding
+OZ107 | ASIANA | SINOZ107 | 5 | Boarding
+OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
+========================
+========SEARCH_RANGE========
+JA111 | JeanAir | MUC | JA111 | 4 | Departure
+KE901 | KoreanAir | LAX | KE901 | 7 | Boarding
+=============================

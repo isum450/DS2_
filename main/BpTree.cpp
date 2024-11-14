@@ -242,26 +242,73 @@ BpTreeNode* BpTree::searchDataNode(string name) {
 
 bool BpTree::SearchModel(string model_name) {
 
-	BpTreeNode* pCur = root;
+	BpTreeNode* search_name = searchDataNode(model_name);
 
-	while (pCur->getMostLeftChild() != nullptr)
-		pCur = pCur->getMostLeftChild();
+	if (search_name != nullptr)
+	{
 
+		*fout << "========SEARCH_BP========" << endl;
 
-	while (pCur) {
-		if (pCur->getDataMap()->find(model_name) != pCur->getDataMap()->end()) {
-			return true;
+		while (search_name != nullptr)
+		{
+
+			auto datamap = search_name->getDataMap();
+
+			for (const auto& pair : *datamap) {
+				FlightData foutData = *pair.second;
+				*fout << pair.first << " | " << foutData.GetAirlineName() << " | " << foutData.GetDestination() << foutData.GetFlightNumber() << " | " << foutData.GetNumberofSeats() << " | " << foutData.GetStatus() << endl;
+			}
+
+			search_name = search_name->getNext();
+
 		}
-		pCur = pCur->getNext();
+		*fout << "========================" << endl;
+		return true;
 	}
+
 	return false;
 }
 
-/*
-bool BpTree::SearchRange(string start, string end) {
 
+bool BpTree::SearchRange(string start, string end) {
+	BpTreeNode* current = root;
+
+	while (current->getMostLeftChild() != nullptr) {
+		current = current->getMostLeftChild();
+	}
+
+	*fout << "========SEARCH_RANGE========" << endl;
+
+	bool foundData = false;
+
+	while (current != nullptr) {
+		auto datamap = current->getDataMap();
+
+		for (const auto& pair : *datamap) {
+			string flightNumber = pair.first;
+
+			if (flightNumber[0] >= start[0] && flightNumber[0] <= end[0]) {
+				FlightData foutData = *pair.second;
+
+				*fout << flightNumber << " | "
+					<< foutData.GetAirlineName() << " | "
+					<< foutData.GetDestination() << " | "
+					<< foutData.GetFlightNumber() << " | "
+					<< foutData.GetNumberofSeats() << " | "
+					<< foutData.GetStatus() << endl;
+
+				foundData = true;
+			}
+		}
+
+		current = current->getNext();
+	}
+
+	*fout << "=============================" << endl;
+
+	return foundData;
 }
-*/
+
 
 void BpTree::Print() {
 	BpTreeNode* current = root;
@@ -272,6 +319,7 @@ void BpTree::Print() {
 	while (current!= nullptr)
 	{
 		auto datamap = current->getDataMap();
+
 
 		for (const auto& pair : *datamap) {
 			FlightData foutData = *pair.second;
