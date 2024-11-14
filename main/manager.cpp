@@ -79,7 +79,7 @@ bool Manager::LOAD() {
     //return true;
 //}
 
-bool Manager::ADD(string line) {
+bool Manager::ADD(string line) {//BpTree add command
     stringstream inputdata(line);
     vector<string> DATA_;
     string input;
@@ -88,15 +88,77 @@ bool Manager::ADD(string line) {
     {
         DATA_.push_back(input);
     }
+    if (DATA_.size() != 5)
+        return false;
     FlightData* DATA = new FlightData();
-    DATA->SetAirlineName(DATA_[0]);
-    DATA->SetFlightNumber(DATA_[1]);
-    DATA->SetDestination(DATA_[2]);
-    DATA->SetNumberofSeats(atoi(DATA_[3].c_str()));
+    DATA->SetAirlineName(DATA_[1]);
+    DATA->SetFlightNumber(DATA_[2]);
+    DATA->SetDestination(DATA_[3]);
     DATA->SetStatus(DATA_[4]);
-    bp->Insert(DATA);
 
-    return true;
+    
+
+    BpTreeNode* addData = bp->searchDataNode(DATA->GetFlightNumber());
+    if (addData == nullptr)//DATA search failed
+    {
+        bp->Insert(DATA);
+
+        flog << "======== ADD ========" << endl;
+        flog << DATA->GetFlightNumber() << " | " << DATA->GetAirlineName() << " | " << DATA->GetDestination() << " | " << DATA->GetNumberofSeats() << " | " << DATA->GetStatus() << endl;
+        flog << "=====================" << endl;
+
+        return true;
+    }
+    else if(BpTreeDataNode* curr = dynamic_cast<BpTreeDataNode*>(addData))//DATA search
+    {
+        auto it = curr->getDataMap()->find(DATA->GetFlightNumber());
+        string state;
+        if (it != curr->getDataMap()->end())
+        {
+            state = it->second->GetStatus();
+        }
+
+        if ((state == "Cancelled" && DATA->GetStatus() == "Boarding") ||
+            (state == "Boarding" && DATA->GetStatus() == "Boarding") ||
+            (state == "Delayed" && DATA->GetStatus() == "Delayed") )
+        {
+            if (it->second->GetNumberofSeats() > 0)
+            {
+                it->second->SetStatus(DATA->GetStatus());
+                it->second->SetSeatsDec();
+
+                flog << "======== ADD ========" << endl;
+                flog << it->second->GetFlightNumber() << " | " << it->second->GetAirlineName() << " | " << it->second->GetDestination() << " | " << it->second->GetNumberofSeats() << " | " << it->second->GetStatus() << endl;
+                flog << "=====================" << endl;
+
+                return true;
+            }
+            else if (it->second->GetNumberofSeats() == 0)
+            {
+                //AVL TREE
+                return false;
+            }
+            
+        }
+        else if (DATA->GetStatus() == "Departure")
+        {
+            if (it->second->GetNumberofSeats() == 0)
+            {
+                //AVL TREE
+            }
+            else 
+                it->second->SetSeatsDec();
+
+            flog << "======== ADD ========" << endl;
+            flog << it->second->GetFlightNumber() << " | " << it->second->GetAirlineName() << " | " << it->second->GetDestination() << " | " << it->second->GetNumberofSeats() << " | " << it->second->GetStatus() << endl;
+            flog << "=====================" << endl;
+
+            return true;
+        }
+        else
+            return false;
+        
+    }
 }
 
 bool Manager::PRINT_BP() {

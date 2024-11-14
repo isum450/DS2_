@@ -85,15 +85,27 @@ bool BpTree::Insert(FlightData* newData) {
 					i++;
 				}
 				string it = newData->GetFlightNumber();
-				if (key[0]>it) {//첫번째 키 값보다도 작을 때
-					current = indexNode->getMostLeftChild();
-				}
-				else if ((key[0]<it) && (key[1] > it))
+				if (i == 1)
 				{
-					current = node[0];
+					if (key[0] > it) {//첫번째 키 값보다도 작을 때
+						current = indexNode->getMostLeftChild();
+					}
+					else if (key[0] < it) {//두번째 키 값보다도 큰 경우
+						current = node[0];
+					}
 				}
-				else if(key[1] <it ){//두번째 키 값보다도 큰 경우
-					current = node[1];
+				else if (i == 2)
+				{
+					if (key[0] > it) {//첫번째 키 값보다도 작을 때
+						current = indexNode->getMostLeftChild();
+					}
+					else if ((key[0] < it) && (key[1] > it))
+					{
+						current = node[0];
+					}
+					else if (key[1] < it) {//두번째 키 값보다도 큰 경우
+						current = node[1];
+					}
 				}
 
 			}
@@ -166,12 +178,24 @@ void BpTree::splitIndexNode(BpTreeNode* pIndexNode) {
 	vector<pair<string, BpTreeNode*>>tempIndex(idxmap->begin(), idxmap->end());
 
 	newNode->setMostLeftChild(pIndexNode->getMostLeftChild());
-	newNode->insertIndexMap(tempIndex[0].first, tempIndex[1].second);
+	newNode->insertIndexMap(tempIndex[0].first, tempIndex[0].second);
 	newNode->insertIndexMap(tempIndex[1].first, nullptr);
+
+	if (tempIndex[0].second != nullptr) {
+		tempIndex[0].second->setParent(newNode);
+	}
+	if (pIndexNode->getMostLeftChild() != nullptr) {
+		pIndexNode->getMostLeftChild()->setParent(newNode);
+	}
+
 	pIndexNode->deleteMap(tempIndex[0].first);
 	pIndexNode->setMostLeftChild(tempIndex[1].second);
 	pIndexNode->deleteMap(tempIndex[1].first);
 
+	if (pIndexNode->getMostLeftChild() != nullptr )
+	{
+		pIndexNode->getMostLeftChild()->setParent(pIndexNode);
+	}
 
 	// 새로운 인덱스 노드를 부모 노드에 연결합니다.
 	if (pIndexNode->getParent() == nullptr) {
@@ -179,13 +203,12 @@ void BpTree::splitIndexNode(BpTreeNode* pIndexNode) {
 		newRoot->insertIndexMap(tempIndex[1].first, pIndexNode);
 		newRoot->setMostLeftChild(newNode);
 		pIndexNode->setParent(newRoot);
-		
 		newNode->setParent(newRoot);
 		root = newRoot;
 	}
 	else {
 		BpTreeIndexNode* parent = dynamic_cast<BpTreeIndexNode*>(pIndexNode->getParent());
-		parent->insertIndexMap(tempIndex[1].first, newNode);
+		parent->insertIndexMap(tempIndex[1].first, pIndexNode);
 		newNode->setParent(parent);
 		pIndexNode->setParent(parent);
 		if (excessIndexNode(parent)) {
@@ -196,6 +219,10 @@ void BpTree::splitIndexNode(BpTreeNode* pIndexNode) {
 
 BpTreeNode* BpTree::searchDataNode(string name) {
 	BpTreeNode* pCur = root;
+
+	while (pCur->getMostLeftChild() != nullptr)
+		pCur = pCur->getMostLeftChild();
+
 
 	while (pCur) {
 		if (pCur->getDataMap()->find(name) != pCur->getDataMap()->end()) {
@@ -210,6 +237,10 @@ BpTreeNode* BpTree::searchDataNode(string name) {
 bool BpTree::SearchModel(string model_name) {
 
 	BpTreeNode* pCur = root;
+
+	while (pCur->getMostLeftChild() != nullptr)
+		pCur = pCur->getMostLeftChild();
+
 
 	while (pCur) {
 		if (pCur->getDataMap()->find(model_name) != pCur->getDataMap()->end()) {
