@@ -20,13 +20,3 @@ KE901 | KoreanAir | LAXKE901 | 7 | Boarding
 OZ107 | ASIANA | SINOZ107 | 5 | Boarding
 OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
 ========================
-===== ERROR =====
-300
-===============
-
-======== ADD ========
-7C024 | JEJU | CJU | 2 | Delayed
-=====================
-======== ADD ========
-9C024 | JEJU | CJU | 99 | Delayed
-=====================

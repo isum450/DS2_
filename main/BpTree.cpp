@@ -144,6 +144,11 @@ void BpTree::splitDataNode(BpTreeNode* pDataNode) {
 	newNode->insertDataMap(key[1], node[1]);
 	pDataNode->deleteMap(key[1]);
 
+	if (pDataNode->getPrev() != nullptr)
+	{
+		pDataNode->getPrev()->setNext(newNode);
+		newNode->setPrev(pDataNode->getPrev());
+	}
 	newNode->setNext(pDataNode);
 	pDataNode->setPrev(newNode);
 
@@ -209,6 +214,7 @@ void BpTree::splitIndexNode(BpTreeNode* pIndexNode) {
 	else {
 		BpTreeIndexNode* parent = dynamic_cast<BpTreeIndexNode*>(pIndexNode->getParent());
 		parent->insertIndexMap(tempIndex[1].first, pIndexNode);
+		parent->setMostLeftChild(newNode);
 		newNode->setParent(parent);
 		pIndexNode->setParent(parent);
 		if (excessIndexNode(parent)) {
