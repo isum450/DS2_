@@ -29,7 +29,6 @@ public:
 	bool 	SearchModel(string model_name);
 	bool	SearchRange(string start, string end);
 	void	Print(); // print all 
-
 };
 
 #endif

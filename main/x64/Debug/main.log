@@ -1,4 +1,2 @@
-﻿  BpTree.cpp
-C:\Users\is104\DATASTRUCTURE\main\DS2\DS2\main\BpTreeNode.h(36): warning C4172: 지역 변수 또는 임시: m의 주소를 반환하고 있습니다.
-C:\Users\is104\DATASTRUCTURE\main\DS2\DS2\main\BpTreeNode.h(37): warning C4172: 지역 변수 또는 임시: m의 주소를 반환하고 있습니다.
-  main.vcxproj -> C:\Users\is104\DATASTRUCTURE\main\DS2\DS2\x64\Debug\main.exe
+﻿  AVLTree.cpp
+  main.vcxproj -> C:\Users\leeso\DS2\DS2_\x64\Debug\main.exe

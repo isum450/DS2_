@@ -229,7 +229,6 @@ BpTreeNode* BpTree::searchDataNode(string name) {
 	while (pCur->getMostLeftChild() != nullptr)
 		pCur = pCur->getMostLeftChild();
 
-
 	while (pCur) {
 		if (pCur->getDataMap()->find(name) != pCur->getDataMap()->end()) {
 			return pCur;
