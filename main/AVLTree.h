@@ -15,9 +15,20 @@ public:
 		root = NULL;
 	}
 	~AVLTree() {};
-	//bool		Insert(FlightData* pFlightData);
-	//FlightData* Search(string name);
-	//void GetVector(vector<FlightData*>& v);
+	bool		Insert(FlightData* pFlightData);
+	int			getHeight(AVLNode* avlNode);
+	int			SetBF(AVLNode* avlNode);
+	void		UpdateBF(AVLNode* avlNode);
+	AVLNode*	Balance(AVLNode* avlNode);
+	AVLNode*	RR(AVLNode* node);
+	AVLNode*	LL(AVLNode* node);
+	AVLNode*	RL(AVLNode* node);
+	AVLNode*	LR(AVLNode* node);
+	AVLNode*	getRoot() { return root; };
+	void setRoot(AVLNode* node) { root = node; };
+
+	FlightData* Search(string name);
+	void GetVector(vector<FlightData*>& v);
 };
 
 #endif

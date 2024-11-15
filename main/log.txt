@@ -3,32 +3,49 @@ Opening command file: command.txt
 Success
 ====================
 ========PRINT_BP========
-7C024 | JEJU | CJU7C024 | 3 | Delayed
-AK101 | AirKwangwoon | LHRAK101 | 6 | Cancelled
-JA111 | JeanAir | MUCJA111 | 4 | Departure
-KE901 | KoreanAir | LAXKE901 | 7 | Boarding
-OZ107 | ASIANA | SINOZ107 | 5 | Boarding
+7C024 | JEJU | CJU7C024 | 1 | Delayed
+AK101 | AirKwangwoon | LHRAK101 | 1 | Cancelled
+JA111 | JeanAir | MUCJA111 | 1 | Departure
+KE901 | KoreanAir | LAXKE901 | 1 | Boarding
+OZ107 | ASIANA | SINOZ107 | 1 | Boarding
 ========================
 ======== ADD ========
 OZ999 | ASIANA | MUC | 99 | Boarding
 =====================
 ========PRINT_BP========
-7C024 | JEJU | CJU7C024 | 3 | Delayed
-AK101 | AirKwangwoon | LHRAK101 | 6 | Cancelled
-JA111 | JeanAir | MUCJA111 | 4 | Departure
-KE901 | KoreanAir | LAXKE901 | 7 | Boarding
-OZ107 | ASIANA | SINOZ107 | 5 | Boarding
+7C024 | JEJU | CJU7C024 | 1 | Delayed
+AK101 | AirKwangwoon | LHRAK101 | 1 | Cancelled
+JA111 | JeanAir | MUCJA111 | 1 | Departure
+KE901 | KoreanAir | LAXKE901 | 1 | Boarding
+OZ107 | ASIANA | SINOZ107 | 1 | Boarding
 OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
 ========================
 ========SEARCH_BP========
-7C024 | JEJU | CJU7C024 | 3 | Delayed
-AK101 | AirKwangwoon | LHRAK101 | 6 | Cancelled
-JA111 | JeanAir | MUCJA111 | 4 | Departure
-KE901 | KoreanAir | LAXKE901 | 7 | Boarding
-OZ107 | ASIANA | SINOZ107 | 5 | Boarding
+7C024 | JEJU | CJU7C024 | 1 | Delayed
+AK101 | AirKwangwoon | LHRAK101 | 1 | Cancelled
+JA111 | JeanAir | MUCJA111 | 1 | Departure
+KE901 | KoreanAir | LAXKE901 | 1 | Boarding
+OZ107 | ASIANA | SINOZ107 | 1 | Boarding
 OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
 ========================
 ========SEARCH_RANGE========
-JA111 | JeanAir | MUC | JA111 | 4 | Departure
-KE901 | KoreanAir | LAX | KE901 | 7 | Boarding
+JA111 | JeanAir | MUC | JA111 | 1 | Departure
+KE901 | KoreanAir | LAX | KE901 | 1 | Boarding
 =============================
+===== ERROR =====
+300
+===============
+
+======== ADD ========
+OZ107 | ASIANA | SIN | 0 | Boarding
+=====================
+======== ADD ========
+7C024 | JEJU | CJU | 0 | Delayed
+=====================
+======== ADD ========
+JA111 | JeanAir | MUC | 0 | Departure
+=====================
+===== ERROR =====
+300
+===============
+
