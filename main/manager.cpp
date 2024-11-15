@@ -32,6 +32,12 @@ void Manager::run(const char* command_txt) {
         {
             bool printComment = LOAD();
             if (!printComment)
+                PrintErrorCode(200);
+        }
+        else if (cmd_line == "VLOAD")
+        {
+            bool printComment = VLOAD();
+            if (!printComment)
                 PrintErrorCode(100);
         }
         else if (cmd_line.find("ADD") != string::npos )
@@ -220,10 +226,12 @@ bool Manager::ADD(string line) {//BpTree add command
 }
 
 bool Manager::PRINT_BP() {
+
     if (bp->getRoot() == nullptr)
     {
         return false;
     }
+
     bp->Print();
     return true;
 }

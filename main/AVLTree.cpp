@@ -129,7 +129,28 @@ AVLNode* AVLTree::RL(AVLNode* node) {
 
 
 void AVLTree::GetVector(vector<FlightData*>& v) {
+	if (root == nullptr) return; // 트리가 비어 있는 경우
 
+	std::queue<AVLNode*> nodeQueue;
+	nodeQueue.push(root); // 루트 노드를 큐에 삽입
+
+	while (!nodeQueue.empty()) {
+		AVLNode* currentNode = nodeQueue.front();
+		nodeQueue.pop();
+
+		// 현재 노드의 데이터를 벡터에 추가
+		v.push_back(currentNode->getFlightData());
+
+		// 왼쪽 자식이 있다면 큐에 추가
+		if (currentNode->getLeft() != nullptr) {
+			nodeQueue.push(currentNode->getLeft());
+		}
+
+		// 오른쪽 자식이 있다면 큐에 추가
+		if (currentNode->getRight() != nullptr) {
+			nodeQueue.push(currentNode->getRight());
+		}
+	}
 }
 
 /*

@@ -1,4 +1,3 @@
-Opening command file: command.txt
 ========LOAD========
 Success
 ====================
