@@ -11,7 +11,7 @@ Manager::~Manager() {
 void Manager::run(const char* command_txt) {
     // Open command & log file
     fcmd.open(command_txt);
-    flog.open("log.txt");
+    flog.open("C:\\Users\\leeso\\DS2\\DS2_\\main\\log.txt");
     if (!fcmd)
     {
         flog << "Fail to open command file" << endl;
@@ -253,8 +253,8 @@ bool Manager::SEARCH_BP(string start, string end) {
     return true;
 }
 
-bool Manager::SEARCH_AVL(string name) {
-
+bool Manager::SEARCH_AVL(string name)
+{
     if (avl->getRoot() == nullptr)
         return false;
 

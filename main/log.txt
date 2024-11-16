@@ -48,3 +48,15 @@ JA111 | JeanAir | MUC | 0 | Departure
 300
 ===============
 
+======= VPRINT A =======
+ASIANA | OZ107 | SIN | Boarding
+JEJU | 7C024 | CJU | Delayed
+JeanAir | JA111 | MUC | Departure
+======================
+======= VPRINT B =======
+JEJU | 7C024 | CJU | Delayed
+JeanAir | JA111 | MUC | Departure
+ASIANA | OZ107 | SIN | Boarding
+======================
+====== SEARCH_AVL ======
+OZ107 | ASIANA | SIN | 0 | Boarding

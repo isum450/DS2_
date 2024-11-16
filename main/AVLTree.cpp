@@ -3,6 +3,7 @@
 bool AVLTree::Insert(FlightData* pFlightData) {
 	AVLNode* newNode = new AVLNode();
 	newNode->setFlightData(pFlightData);
+	newNode->getFlightData()->SetNumberofSeats(0);
 	newNode->setLeft(nullptr);
 	newNode->setRight(nullptr);
 	newNode->setBF(0);
@@ -79,14 +80,14 @@ AVLNode* AVLTree::Balance(AVLNode* avlNode)
 	UpdateBF(avlNode);
 
 	if (avlNode->getBF() > 1) {
-		if (avlNode->getLeft()->getBF() > 0) {
-			avlNode->setLeft(LR(avlNode->getLeft())); // LR
+		if (avlNode->getLeft()!=nullptr && avlNode->getLeft()->getBF() < 0) {
+			avlNode->setLeft(RR(avlNode->getLeft())); //   LR
 		}
 		return LL(avlNode); // LL
 	}
 	if (avlNode->getBF() < -1) {
-		if (avlNode->getRight()->getBF() < 0) {
-			avlNode->setRight(RL(avlNode->getRight())); // RL
+		if (avlNode->getRight()!=nullptr&&avlNode->getRight()->getBF() > 0) {
+			avlNode->setRight(LL(avlNode->getRight())); // RL
 		}
 		return RR(avlNode); // RR
 	}
@@ -95,6 +96,9 @@ AVLNode* AVLTree::Balance(AVLNode* avlNode)
 
 AVLNode* AVLTree::LL(AVLNode* node) {
 	AVLNode* parent = node->getLeft();
+	if (parent == nullptr) {
+		return node;
+	}
 	node->setLeft(parent->getRight());
 	parent->setRight(node);
 
@@ -107,6 +111,10 @@ AVLNode* AVLTree::LL(AVLNode* node) {
 
 AVLNode* AVLTree::RR(AVLNode* node) {
 	AVLNode* parent = node->getRight();
+	if (parent == nullptr) {
+		return node;
+	}
+
 	node->setRight(parent->getLeft());
 	parent->setLeft(node);
 
@@ -117,21 +125,11 @@ AVLNode* AVLTree::RR(AVLNode* node) {
 	return parent;
 }
 
-AVLNode* AVLTree::LR(AVLNode* node) {
-	node->setLeft(RR(node->getLeft()));
-	return LL(node);
-}
-
-AVLNode* AVLTree::RL(AVLNode* node) {
-	node->setRight(LL(node->getRight()));
-	return RR(node);
-}
-
 
 void AVLTree::GetVector(vector<FlightData*>& v) {
 	if (root == nullptr) return; // 트리가 비어 있는 경우
 
-	std::queue<AVLNode*> nodeQueue;
+	queue<AVLNode*> nodeQueue;
 	nodeQueue.push(root); // 루트 노드를 큐에 삽입
 
 	while (!nodeQueue.empty()) {
