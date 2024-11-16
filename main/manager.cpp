@@ -5,13 +5,14 @@ Manager::Manager(int bpOrder) {
 }
 
 Manager::~Manager() {
-
+    delete(avl);
+    delete(bp);
 }
 
 void Manager::run(const char* command_txt) {
     // Open command & log file
     fcmd.open(command_txt);
-    flog.open("C:\\Users\\leeso\\DS2\\DS2_\\main\\log.txt");
+    flog.open("log.txt");
     if (!fcmd)
     {
         flog << "Fail to open command file" << endl;
@@ -22,28 +23,26 @@ void Manager::run(const char* command_txt) {
 
     // Read and Run command
     string cmd_line;
-    
-    
 
 
     while (getline(fcmd, cmd_line))//read command.txt 1 line
     {
-        if (cmd_line == "LOAD")//LOAD command
+        if (cmd_line == "LOAD")//LOAD
         {
-            bool printComment = LOAD();
-            if (!printComment)
+            bool printComment = LOAD();//BpTree LOAD
+            if (!printComment)//error
                 PrintErrorCode(200);
         }
         else if (cmd_line == "VLOAD")
         {
-            bool printComment = VLOAD();
-            if (!printComment)
+            bool printComment = VLOAD();//AVL tree->Vector
+            if (!printComment)//error
                 PrintErrorCode(100);
         }
         else if (cmd_line.find("ADD") != string::npos )
         {
-            bool printComment = ADD(cmd_line);
-            if (!printComment)
+            bool printComment = ADD(cmd_line);//BpTree ADD DATA
+            if (!printComment)//error
                 PrintErrorCode(300);
         }
         else if (cmd_line.find("SEARCH_BP") != string::npos)
@@ -57,13 +56,13 @@ void Manager::run(const char* command_txt) {
                 DATA_.push_back(input);
             }
 
-            if (DATA_.size() == 3)
+            if (DATA_.size() == 3)//Range search
             {
                 SEARCH_BP(DATA_[1], DATA_[2]);
             }
             else if (DATA_.size() == 2)
             {
-                SEARCH_BP(DATA_[1]);
+                SEARCH_BP(DATA_[1]);//flightNumber search
             }
         }
         else if (cmd_line.find("SEARCH_AVL") != string::npos)
@@ -77,12 +76,12 @@ void Manager::run(const char* command_txt) {
                 flightnumber.push_back(input);
             }
             
-            if (flightnumber.size() != 2)
+            if (flightnumber.size() != 2)//command size error
                 PrintErrorCode(500);
 
             bool printComment = SEARCH_AVL(flightnumber[1]);
 
-            if (!printComment)
+            if (!printComment)//AVL error
                 PrintErrorCode(500);
         }
         else if (cmd_line.find("VPRINT") != string::npos)
@@ -96,27 +95,31 @@ void Manager::run(const char* command_txt) {
                 type_.push_back(input);
             }
             bool printComment;
-            if (type_[1] == "A")
+            if (type_[1] == "A")//AVL Print type A
             {
                 printComment = VPRINT("A");
             }
-            else if (type_[1] == "B")
+            else if (type_[1] == "B")//AVL Print type B
             {
                 printComment = VPRINT("B");
             }
             
-            if (!printComment)
+            if (!printComment)//error
                 PrintErrorCode(600);
         }
         else if (cmd_line == "PRINT_BP")
         {
             bool printComment = PRINT_BP();
-            if (!printComment)
+            if (!printComment)//error
                 PrintErrorCode(700);
         }
-        else if (cmd_line == "EXIT")
+        else if (cmd_line == "EXIT")//program exit
         {
             //command.txt close
+            flog << "========EXIT========" << endl;
+            flog << "Success" << endl;
+            flog << "===================" << endl;
+            flog.close();
             fcmd.close();
             return;
         }
@@ -132,18 +135,18 @@ void Manager::PrintErrorCode(int num)
 }
 
 
-bool Manager::LOAD() {
+bool Manager::LOAD() {//input_data.txt->BpTree
     if (bp == nullptr)
     {
-        bp = new BpTree(&flog, 3);
+        bp = new BpTree(&flog, 3);//bp initialize
         return true;
     }
     else
-        return false;
+        return false;//already bp exist
 }
 
 bool Manager::VLOAD() {
-	avl->GetVector(Print_vector);
+	avl->GetVector(Print_vector);//AVL Tree -> Vector
 
     return true;
 }
@@ -158,7 +161,7 @@ bool Manager::ADD(string line) {//BpTree add command
     {
         DATA_.push_back(input);
     }
-    if (DATA_.size() != 5)
+    if (DATA_.size() != 5)//command size error
         return false;
 
     FlightData* DATA = new FlightData();
@@ -170,9 +173,10 @@ bool Manager::ADD(string line) {//BpTree add command
     
 
     BpTreeNode* addData = bp->searchDataNode(DATA->GetFlightNumber());
-    if (addData == nullptr)//DATA search failed
+
+    if (addData == nullptr)//DATA not exist in BpTree
     {
-        bp->Insert(DATA);
+        bp->Insert(DATA);//insert data
 
         flog << "======== ADD ========" << endl;
         flog << DATA->GetFlightNumber() << " | " << DATA->GetAirlineName() << " | " << DATA->GetDestination() << " | " << DATA->GetNumberofSeats() << " | " << DATA->GetStatus() << endl;
@@ -189,6 +193,7 @@ bool Manager::ADD(string line) {//BpTree add command
             state = it->second->GetStatus();
         }
 
+        //ADD condition
         if ((state == "Cancelled" && DATA->GetStatus() == "Boarding") ||
             (state == "Boarding" && DATA->GetStatus() == "Boarding") ||
             (state == "Delayed" && DATA->GetStatus() == "Delayed") )
@@ -196,6 +201,7 @@ bool Manager::ADD(string line) {//BpTree add command
             it->second->SetStatus(DATA->GetStatus());
             it->second->SetSeatsDec();
 
+            //input comment log.txt
             flog << "======== ADD ========" << endl;
             flog << it->second->GetFlightNumber() << " | " << it->second->GetAirlineName() << " | " << it->second->GetDestination() << " | " << it->second->GetNumberofSeats() << " | " << it->second->GetStatus() << endl;
             flog << "=====================" << endl;
@@ -225,29 +231,30 @@ bool Manager::ADD(string line) {//BpTree add command
     }
 }
 
-bool Manager::PRINT_BP() {
+bool Manager::PRINT_BP() 
+{
 
-    if (bp->getRoot() == nullptr)
+    if (bp->getRoot() == nullptr)//bp empty
     {
         return false;
     }
 
-    bp->Print();
+    bp->Print();//bp->print
     return true;
 }
 
 bool Manager::SEARCH_BP(string name) {
     
-    bool printComment = bp->SearchModel(name);
-    if (!printComment)
+    bool printComment = bp->SearchModel(name);//bp print
+    if (!printComment)//error
         PrintErrorCode(400);
 
     return true;
 }
 
 bool Manager::SEARCH_BP(string start, string end) {
-    bool printComment = bp->SearchRange(start, end);
-    if (!printComment)
+    bool printComment = bp->SearchRange(start, end);//bp range search -> print
+    if (!printComment)//error
         PrintErrorCode(400);
 
     return true;
@@ -255,58 +262,46 @@ bool Manager::SEARCH_BP(string start, string end) {
 
 bool Manager::SEARCH_AVL(string name)
 {
-    if (avl->getRoot() == nullptr)
+    if (avl->getRoot() == nullptr)//AVL empty
         return false;
 
-    AVLNode* currentNode = avl->getRoot();
+    FlightData* printData = avl->Search(name);
 
-    while (currentNode != nullptr) {
-        if (currentNode->getFlightData()->GetFlightNumber() == name)
-        {
-            flog << "====== SEARCH_AVL ======" << endl;
-            flog << currentNode->getFlightData()->GetFlightNumber() << " | " << currentNode->getFlightData()->GetAirlineName() << " | " << currentNode->getFlightData()->GetDestination() << " | " << currentNode->getFlightData()->GetNumberofSeats() << " | " << currentNode->getFlightData()->GetStatus() << endl;
-            return true;
-        }
-        else if (name < currentNode->getFlightData()->GetFlightNumber()) 
-        {
-            currentNode = currentNode->getLeft();
-        }
-        else 
-        {
-            currentNode = currentNode->getRight();
-        }
-    }
+    flog << "====== SEARCH_AVL ======" << endl;
+    flog << printData->GetFlightNumber() << " | " << printData->GetAirlineName() << " | " << printData->GetDestination() << " | " << printData->GetNumberofSeats() << " | " << printData->GetStatus() << endl;
 
-    return false;
+    return true;
 }
 
 
 bool compareA(FlightData* a, FlightData* b) {
-    if (a->GetAirlineName() != b->GetAirlineName()) {
-        return a->GetAirlineName() < b->GetAirlineName(); // 항공사명 오름차순
+    if (a->GetAirlineName() != b->GetAirlineName()) 
+    {
+        return a->GetAirlineName() < b->GetAirlineName(); // arilinename ascending
     }
-    if (a->GetDestination() != b->GetDestination()) {
-        return a->GetDestination() < b->GetDestination(); // 도착지명 오름차순
+    if (a->GetDestination() != b->GetDestination()) 
+    {
+        return a->GetDestination() < b->GetDestination(); // departure ascending
     }
-    return a->GetStatus() > b->GetStatus(); // 상태 정보 내림차순
+    return a->GetStatus() > b->GetStatus(); // status descending
 }
 
-// 조건 B에 따라 정렬하는 함수
 bool compareB(FlightData* a, FlightData* b) {
     if (a->GetDestination() != b->GetDestination()) {
-        return a->GetDestination() < b->GetDestination(); // 도착지명 오름차순
+        return a->GetDestination() < b->GetDestination(); // departure ascending
     }
     if (a->GetStatus() != b->GetStatus()) {
-        return a->GetStatus() < b->GetStatus(); // 상태 정보 오름차순
+        return a->GetStatus() < b->GetStatus(); // status ascending
     }
-    return a->GetAirlineName() > b->GetAirlineName(); // 항공사명 내림차순
+    return a->GetAirlineName() > b->GetAirlineName(); // airlinename descending
 }
 
 bool Manager::VPRINT(string type_) {
-    if (Print_vector.empty()) {
+    if (Print_vector.empty()) //vector empty
+    {
         return false;
     }
-    if (type_ == "A")
+    if (type_ == "A")//VPRINT A
     {
         sort(Print_vector.begin(), Print_vector.end(), compareA);
         flog << "======= VPRINT A =======\n";
@@ -318,7 +313,7 @@ bool Manager::VPRINT(string type_) {
         }
         flog << "======================\n";
     }
-    else if (type_ == "B")
+    else if (type_ == "B")//VPRINT B
     {
         sort(Print_vector.begin(), Print_vector.end(), compareB);
         flog << "======= VPRINT B =======\n";

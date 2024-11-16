@@ -7,11 +7,13 @@ bool AVLTree::Insert(FlightData* pFlightData) {
 	newNode->setLeft(nullptr);
 	newNode->setRight(nullptr);
 	newNode->setBF(0);
-	if (root == nullptr)
+
+	if (root == nullptr)//root create
 	{
 		root = newNode;
 		return true;
 	}
+
 	AVLNode* parent = nullptr;
 	AVLNode* cur = root;
 		
@@ -28,17 +30,18 @@ bool AVLTree::Insert(FlightData* pFlightData) {
 		}
 	}
 
+	//newNode insert
 	if (pFlightData->GetFlightNumber() < parent->getFlightData()->GetFlightNumber())
 		parent->setLeft(newNode);
 	else
 		parent->setRight(newNode);
 
-	root = Balance(root);
+	root = Balance(root);//balance factor set
 
 	return true;
 }
 
-int AVLTree::getHeight(AVLNode* avlNode)
+int AVLTree::getHeight(AVLNode* avlNode)//get height (recursive)
 {
 	if (avlNode != nullptr)
 	{
@@ -51,7 +54,7 @@ int AVLTree::getHeight(AVLNode* avlNode)
 			return right_height + 1;
 	}
 
-	return 0;
+	return 0;//nullptr
 }
 
 int AVLTree::SetBF(AVLNode* avlNode)
@@ -59,19 +62,19 @@ int AVLTree::SetBF(AVLNode* avlNode)
 	int left = getHeight(avlNode->getLeft());
 	int right = getHeight(avlNode->getRight());
 	
-	return left - right;
+	return left - right;//balance factor
 }
 
-void AVLTree::UpdateBF(AVLNode* avlNode)
+void AVLTree::UpdateBF(AVLNode* avlNode)//recursive
 {
 	if (avlNode == nullptr)
 		return;
-	avlNode->setBF(SetBF(avlNode));
+	avlNode->setBF(SetBF(avlNode));//set balance factor
 	UpdateBF(avlNode->getLeft());
 	UpdateBF(avlNode->getRight());
 }
 
-AVLNode* AVLTree::Balance(AVLNode* avlNode) 
+AVLNode* AVLTree::Balance(AVLNode* avlNode)
 {
 	if (avlNode == nullptr)
 	{
@@ -79,6 +82,7 @@ AVLNode* AVLTree::Balance(AVLNode* avlNode)
 	}
 	UpdateBF(avlNode);
 
+	//unbalanced AVL tree -> Rotation
 	if (avlNode->getBF() > 1) {
 		if (avlNode->getLeft()!=nullptr && avlNode->getLeft()->getBF() < 0) {
 			avlNode->setLeft(RR(avlNode->getLeft())); //   LR
@@ -91,10 +95,11 @@ AVLNode* AVLTree::Balance(AVLNode* avlNode)
 		}
 		return RR(avlNode); // RR
 	}
-	return avlNode;
+
+	return avlNode;//after rotate
 }
 
-AVLNode* AVLTree::LL(AVLNode* node) {
+AVLNode* AVLTree::LL(AVLNode* node) {//LL Rotation
 	AVLNode* parent = node->getLeft();
 	if (parent == nullptr) {
 		return node;
@@ -102,14 +107,14 @@ AVLNode* AVLTree::LL(AVLNode* node) {
 	node->setLeft(parent->getRight());
 	parent->setRight(node);
 
-	// 회전 후 밸런스 팩터 업데이트
+	//balance factor update 
 	node->setBF(SetBF(node));
 	parent->setBF(SetBF(parent));
 
 	return parent;
 }
 
-AVLNode* AVLTree::RR(AVLNode* node) {
+AVLNode* AVLTree::RR(AVLNode* node) {//RR Rotation
 	AVLNode* parent = node->getRight();
 	if (parent == nullptr) {
 		return node;
@@ -118,7 +123,7 @@ AVLNode* AVLTree::RR(AVLNode* node) {
 	node->setRight(parent->getLeft());
 	parent->setLeft(node);
 
-	// 회전 후 밸런스 팩터 업데이트
+	//balance factor update 
 	node->setBF(SetBF(node));
 	parent->setBF(SetBF(parent));
 
@@ -127,34 +132,51 @@ AVLNode* AVLTree::RR(AVLNode* node) {
 
 
 void AVLTree::GetVector(vector<FlightData*>& v) {
-	if (root == nullptr) return; // 트리가 비어 있는 경우
+	if (root == nullptr) return; //AVL tree empty error
 
 	queue<AVLNode*> nodeQueue;
-	nodeQueue.push(root); // 루트 노드를 큐에 삽입
+	nodeQueue.push(root); // root node insert queue
 
 	while (!nodeQueue.empty()) {
 		AVLNode* currentNode = nodeQueue.front();
 		nodeQueue.pop();
 
-		// 현재 노드의 데이터를 벡터에 추가
+		//insert vector
 		v.push_back(currentNode->getFlightData());
 
-		// 왼쪽 자식이 있다면 큐에 추가
+		//insert queue
 		if (currentNode->getLeft() != nullptr) {
 			nodeQueue.push(currentNode->getLeft());
 		}
 
-		// 오른쪽 자식이 있다면 큐에 추가
+		//insert queue
 		if (currentNode->getRight() != nullptr) {
 			nodeQueue.push(currentNode->getRight());
 		}
 	}
 }
 
-/*
-FlightData* AVLTree::Search(string name) {
-	AVLNode* cur = root;
 
+FlightData* AVLTree::Search(string name) {
+
+	AVLNode* currentNode = root;
+
+	while (currentNode != nullptr) {
+		if (currentNode->getFlightData()->GetFlightNumber() == name)
+		{
+			//name ==AVL_DATA
+			return currentNode->getFlightData();
+		}
+		else if (name < currentNode->getFlightData()->GetFlightNumber()) // name < AVL_DATA
+		{
+			currentNode = currentNode->getLeft();
+		}
+		else //name > AVL_DATA 
+		{
+			currentNode = currentNode->getRight();
+		}
+	}
+
+	return nullptr;
 
 }
-*/
