@@ -30,14 +30,19 @@ void Manager::run(const char* command_txt) {
         if (cmd_line == "LOAD")//LOAD
         {
             bool printComment = LOAD();//BpTree LOAD
+
             if (!printComment)//error
-                PrintErrorCode(200);
+            {
+                PrintErrorCode(100);
+                exit(-1);
+            }
+            
         }
         else if (cmd_line == "VLOAD")
         {
             bool printComment = VLOAD();//AVL tree->Vector
             if (!printComment)//error
-                PrintErrorCode(100);
+                PrintErrorCode(200);
         }
         else if (cmd_line.find("ADD") != string::npos )
         {
@@ -123,6 +128,10 @@ void Manager::run(const char* command_txt) {
             fcmd.close();
             return;
         }
+        else
+        { 
+            PrintErrorCode(800);
+        }
         
     }
 }
@@ -136,16 +145,98 @@ void Manager::PrintErrorCode(int num)
 
 
 bool Manager::LOAD() {//input_data.txt->BpTree
+
     if (bp == nullptr)
     {
         bp = new BpTree(&flog, 3);//bp initialize
+
+        //input_data.txt open
+        ifstream ifp;
+        ifp.open("input_data.txt");
+
+        if (ifp.fail())//file not open
+        {
+            return false;
+        }
+
+        string line;//read input_data.txt 1 line
+
+        while (getline(ifp, line))
+        {
+            stringstream inputdata(line);
+            vector<string> DATA_;
+            string input;
+
+            while (inputdata >> input)
+            {
+                DATA_.push_back(input);
+            }
+            FlightData* DATA = new FlightData();
+            DATA->SetAirlineName(DATA_[0]);
+            DATA->SetFlightNumber(DATA_[1]);
+            DATA->SetDestination(DATA_[2]);
+            DATA->SetNumberofSeats(atoi(DATA_[3].c_str()));
+            DATA->SetStatus(DATA_[4]);
+
+
+            //Exception handling
+            if (DATA->GetAirlineName() == "JEJU" && DATA->GetDestination() != "CJU")
+            {
+                delete(bp);
+                bp = nullptr;
+                return false;
+            }
+            
+            if (DATA->GetAirlineName() != "KoreanAir" && DATA->GetAirlineName() != "ASIANA" && DATA->GetAirlineName() != "JEJU" && DATA->GetAirlineName() != "JeanAir" && DATA->GetAirlineName() != "AirKwangwoon")
+            {
+                delete(bp);
+                bp = nullptr;
+                return false;
+            }
+            
+            if ((DATA->GetAirlineName() == "KoreanAir" || DATA->GetAirlineName() == "ASIANA") && DATA->GetNumberofSeats() > 7)
+            {
+                delete(bp);
+                bp = nullptr;
+                return false;
+            }
+            else if ((DATA->GetAirlineName() == "JEJU" || DATA->GetAirlineName() == "JeanAir") && DATA->GetNumberofSeats() > 5)
+            {
+                delete(bp);
+                bp = nullptr;
+                return false;
+            }
+            else if (DATA->GetAirlineName() == "AirKwangwoon" && DATA->GetNumberofSeats() > 6)
+            {
+                delete(bp);
+                bp = nullptr;
+                return false;
+            }
+
+            bp->Insert(DATA);//bp->insert
+
+        }
+        ifp.close();//close inpout_data.txt
+
+        flog << "========LOAD========" << endl;
+        flog << "Success" << endl;
+        flog << "====================" << endl;
+
         return true;
     }
     else
+    {
+        delete(bp);
+        bp = nullptr;
         return false;//already bp exist
+    }
+        
 }
 
 bool Manager::VLOAD() {
+    if (avl->getRoot() == nullptr)//AVL tree empty error
+        return false;
+
 	avl->GetVector(Print_vector);//AVL Tree -> Vector
 
     return true;
@@ -170,7 +261,21 @@ bool Manager::ADD(string line) {//BpTree add command
     DATA->SetDestination(DATA_[3]);
     DATA->SetStatus(DATA_[4]);
 
+
+    //Exception handling
+    //jeju
+    if (DATA->GetAirlineName() == "JEJU" && DATA->GetDestination() != "CJU")
+    {
+        return false;
+    }
     
+    if (DATA->GetAirlineName() != "KoreanAir" && DATA->GetAirlineName() != "ASIANA" && DATA->GetAirlineName() != "JEJU" && DATA->GetAirlineName() != "JeanAir" && DATA->GetAirlineName() != "AirKwangwoon")
+    {
+        return false;
+    }
+
+
+    //DATA
 
     BpTreeNode* addData = bp->searchDataNode(DATA->GetFlightNumber());
 
@@ -196,10 +301,21 @@ bool Manager::ADD(string line) {//BpTree add command
         //ADD condition
         if ((state == "Cancelled" && DATA->GetStatus() == "Boarding") ||
             (state == "Boarding" && DATA->GetStatus() == "Boarding") ||
-            (state == "Delayed" && DATA->GetStatus() == "Delayed") )
+            (state == "Delayed" && DATA->GetStatus() == "Delayed") ||
+            (state == "Boarding" && DATA->GetStatus() == "Cancelled"))
         {
-            it->second->SetStatus(DATA->GetStatus());
-            it->second->SetSeatsDec();
+            if ((state == "Boarding" && DATA->GetStatus() == "Boarding") ||
+                (state == "Delayed" && DATA->GetStatus() == "Delayed"))
+            {
+                it->second->SetSeatsDec();
+            }
+            else if (state == "Cancelled" && DATA->GetStatus() == "Boarding" )
+            {
+                it->second->SetStatus(DATA->GetStatus());
+                it->second->SetSeatsDec();
+            }
+            else if (state == "Boarding" && DATA->GetStatus() == "Cancelled")
+                it->second->SetStatus(DATA->GetStatus());
 
             //input comment log.txt
             flog << "======== ADD ========" << endl;
@@ -208,21 +324,6 @@ bool Manager::ADD(string line) {//BpTree add command
 
             if (it->second->GetNumberofSeats() == 0)           
                 avl->Insert(DATA);//AVL TREE
-            return true;
-            
-            
-        }
-        else if (DATA->GetStatus() == "Departure")
-        {
-            it->second->SetSeatsDec();
-
-            flog << "======== ADD ========" << endl;
-            flog << it->second->GetFlightNumber() << " | " << it->second->GetAirlineName() << " | " << it->second->GetDestination() << " | " << it->second->GetNumberofSeats() << " | " << it->second->GetStatus() << endl;
-            flog << "=====================" << endl;
-
-            if (it->second->GetNumberofSeats() == 0)
-                avl->Insert(DATA);//AVL TREE
-            
             return true;
         }
         else
@@ -244,7 +345,11 @@ bool Manager::PRINT_BP()
 }
 
 bool Manager::SEARCH_BP(string name) {
-    
+    if (bp->getRoot() == nullptr)
+    {
+        PrintErrorCode(400);
+        return false;
+    }
     bool printComment = bp->SearchModel(name);//bp print
     if (!printComment)//error
         PrintErrorCode(400);
@@ -253,6 +358,12 @@ bool Manager::SEARCH_BP(string name) {
 }
 
 bool Manager::SEARCH_BP(string start, string end) {
+    if (bp->getRoot() == nullptr)
+    {
+        PrintErrorCode(400);
+        return false;
+    }
+
     bool printComment = bp->SearchRange(start, end);//bp range search -> print
     if (!printComment)//error
         PrintErrorCode(400);
@@ -266,6 +377,9 @@ bool Manager::SEARCH_AVL(string name)
         return false;
 
     FlightData* printData = avl->Search(name);
+
+    if (printData == nullptr)
+        return false;
 
     flog << "====== SEARCH_AVL ======" << endl;
     flog << printData->GetFlightNumber() << " | " << printData->GetAirlineName() << " | " << printData->GetDestination() << " | " << printData->GetNumberofSeats() << " | " << printData->GetStatus() << endl;

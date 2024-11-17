@@ -2,61 +2,64 @@
 Success
 ====================
 ========PRINT_BP========
-7C024 | JEJU | CJU7C024 | 1 | Delayed
-AK101 | AirKwangwoon | LHRAK101 | 1 | Cancelled
-JA111 | JeanAir | MUCJA111 | 1 | Departure
-KE901 | KoreanAir | LAXKE901 | 1 | Boarding
-OZ107 | ASIANA | SINOZ107 | 1 | Boarding
+7C024 | JEJU | CJU | 7C024 | 3 | Delayed
+AK101 | AirKwangwoon | LHR | AK101 | 6 | Cancelled
+JA111 | JeanAir | MUC | JA111 | 4 | Departure
+KE901 | KoreanAir | LAX | KE901 | 7 | Boarding
+OZ107 | ASIANA | SIN | OZ107 | 5 | Boarding
 ========================
 ======== ADD ========
 OZ999 | ASIANA | MUC | 99 | Boarding
 =====================
 ========PRINT_BP========
-7C024 | JEJU | CJU7C024 | 1 | Delayed
-AK101 | AirKwangwoon | LHRAK101 | 1 | Cancelled
-JA111 | JeanAir | MUCJA111 | 1 | Departure
-KE901 | KoreanAir | LAXKE901 | 1 | Boarding
-OZ107 | ASIANA | SINOZ107 | 1 | Boarding
-OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
+7C024 | JEJU | CJU | 7C024 | 3 | Delayed
+AK101 | AirKwangwoon | LHR | AK101 | 6 | Cancelled
+JA111 | JeanAir | MUC | JA111 | 4 | Departure
+KE901 | KoreanAir | LAX | KE901 | 7 | Boarding
+OZ107 | ASIANA | SIN | OZ107 | 5 | Boarding
+OZ999 | ASIANA | MUC | OZ999 | 99 | Boarding
 ========================
 ========SEARCH_BP========
-7C024 | JEJU | CJU7C024 | 1 | Delayed
-AK101 | AirKwangwoon | LHRAK101 | 1 | Cancelled
-JA111 | JeanAir | MUCJA111 | 1 | Departure
-KE901 | KoreanAir | LAXKE901 | 1 | Boarding
-OZ107 | ASIANA | SINOZ107 | 1 | Boarding
-OZ999 | ASIANA | MUCOZ999 | 99 | Boarding
+7C024 | JEJU | CJU7C024 | 3 | Delayed
 ========================
 ========SEARCH_RANGE========
-JA111 | JeanAir | MUC | JA111 | 1 | Departure
-KE901 | KoreanAir | LAX | KE901 | 1 | Boarding
+JA111 | JeanAir | MUC | JA111 | 4 | Departure
+KE901 | KoreanAir | LAX | KE901 | 7 | Boarding
 =============================
-===== ERROR =====
-300
-===============
-
 ======== ADD ========
-OZ107 | ASIANA | SIN | 0 | Boarding
+KE901 | KoreanAir | LAX | 6 | Boarding
 =====================
 ======== ADD ========
-7C024 | JEJU | CJU | 0 | Delayed
+KE901 | KoreanAir | LAX | 5 | Boarding
 =====================
 ======== ADD ========
-JA111 | JeanAir | MUC | 0 | Departure
+KE901 | KoreanAir | LAX | 4 | Boarding
 =====================
-===== ERROR =====
-300
-===============
-
-======= VPRINT A =======
-ASIANA | OZ107 | SIN | Boarding
-JEJU | 7C024 | CJU | Delayed
-JeanAir | JA111 | MUC | Departure
-======================
+======== ADD ========
+KE901 | KoreanAir | LAX | 3 | Boarding
+=====================
+======== ADD ========
+KE901 | KoreanAir | LAX | 2 | Boarding
+=====================
+======== ADD ========
+KE901 | KoreanAir | LAX | 1 | Boarding
+=====================
+======== ADD ========
+KE901 | KoreanAir | LAX | 0 | Boarding
+=====================
+======== ADD ========
+OZ107 | ASIANA | SIN | 4 | Boarding
+=====================
+======== ADD ========
+7C024 | JEJU | CJU | 2 | Delayed
+=====================
 ======= VPRINT B =======
-JEJU | 7C024 | CJU | Delayed
-JeanAir | JA111 | MUC | Departure
-ASIANA | OZ107 | SIN | Boarding
+KoreanAir | KE901 | LAX | Boarding
 ======================
-====== SEARCH_AVL ======
-OZ107 | ASIANA | SIN | 0 | Boarding
+===== ERROR =====
+500
+===============
+
+========EXIT========
+Success
+===================

@@ -6,49 +6,6 @@ BpTree::BpTree(ofstream* fout, int order) {
 	root = nullptr;
 	this->order = order;
 	this->fout = fout;
-
-	//input_data.txt open
-	ifstream ifp;
-	ifp.open("input_data.txt");
-
-	if (ifp.fail())//file not open
-	{
-		*fout << "====Error====" << endl;
-		*fout << "100" << endl;
-		*fout << "=============" << endl;
-		exit(1);
-	}
-	else//LOAD success
-	{
-		*fout << "========LOAD========" << endl;
-		*fout << "Success" << endl;
-	}
-
-	string line;//read input_data.txt 1 line
-
-	while (getline(ifp, line))
-	{
-		stringstream inputdata(line);
-		vector<string> DATA_; 
-		string input;
-
-		while (inputdata >> input)
-		{
-			DATA_.push_back(input);
-		}
-		FlightData* DATA = new FlightData();
-		DATA->SetAirlineName(DATA_[0]);
-		DATA->SetFlightNumber(DATA_[1]);
-		DATA->SetDestination(DATA_[2]);
-		DATA->SetNumberofSeats(atoi(DATA_[3].c_str()));
-		DATA->SetStatus(DATA_[4]);
-
-		Insert(DATA);//bp->insert
-
-	}
-
-	ifp.close();//close inpout_data.txt
-	*fout << "====================" << endl;
 }
 
 bool BpTree::Insert(FlightData* newData) {
@@ -265,7 +222,10 @@ bool BpTree::SearchModel(string model_name) {
 
 			for (const auto& pair : *datamap) {
 				FlightData foutData = *pair.second;
-				*fout << pair.first << " | " << foutData.GetAirlineName() << " | " << foutData.GetDestination() << foutData.GetFlightNumber() << " | " << foutData.GetNumberofSeats() << " | " << foutData.GetStatus() << endl;
+				if (foutData.GetFlightNumber() == model_name)
+				{
+					*fout << pair.first << " | " << foutData.GetAirlineName() << " | " << foutData.GetDestination() << foutData.GetFlightNumber() << " | " << foutData.GetNumberofSeats() << " | " << foutData.GetStatus() << endl;
+				}
 			}
 
 			search_name = search_name->getNext();
@@ -335,7 +295,7 @@ void BpTree::Print() {
 
 		for (const auto& pair : *datamap) {
 			FlightData foutData = *pair.second;
-			*fout << pair.first <<" | " << foutData.GetAirlineName() << " | " << foutData.GetDestination() << foutData.GetFlightNumber() << " | " << foutData.GetNumberofSeats() << " | " << foutData.GetStatus() << endl;
+			*fout << pair.first <<" | " << foutData.GetAirlineName() << " | " << foutData.GetDestination() << " | " << foutData.GetFlightNumber() << " | " << foutData.GetNumberofSeats() << " | " << foutData.GetStatus() << endl;
 		}
 
 		current = current->getNext();

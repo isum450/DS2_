@@ -132,7 +132,6 @@ AVLNode* AVLTree::RR(AVLNode* node) {//RR Rotation
 
 
 void AVLTree::GetVector(vector<FlightData*>& v) {
-	if (root == nullptr) return; //AVL tree empty error
 
 	queue<AVLNode*> nodeQueue;
 	nodeQueue.push(root); // root node insert queue
